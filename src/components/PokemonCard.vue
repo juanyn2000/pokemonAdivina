@@ -1,13 +1,18 @@
 <template>
   <div class="card">
-    <img
-      :src="pokemon.sprites?.front_default"
-      :alt="pokemon?.name"
-      class="card-img"
-      :style="{ filter: adivinado ? 'none' : ' brightness(0)' }"
-    />
-    <h3 v-if="adivinado">{{pokemon.name}}</h3>
-    <div class="card-content" :style="{ display: adivinado ? 'none' : 'block'}">
+    <div class="card__content-img">
+      <img
+        :src="pokemon.sprites?.front_default"
+        :alt="pokemon?.name"
+        class="card-img"
+        :style="{ filter: adivinado ? 'none' : ' brightness(0)' }"
+      />
+    </div>
+    <h3 v-if="adivinado">{{ pokemon.name }}</h3>
+    <div
+      class="card-content"
+      :style="{ display: adivinado ? 'none' : 'block' }"
+    >
       <input
         type="text"
         placeholder="Escriba el nombre"
@@ -36,7 +41,7 @@ export default {
     descubrir() {
       if (this.pokemonInput.toLowerCase() === this.pokemon.name) {
         this.adivinado = true;
-        this.$emit("pokemonAdivinado",this.adivinado);
+        this.$emit("pokemonAdivinado", this.adivinado);
       }
     },
   },
@@ -54,13 +59,20 @@ export default {
   border-radius: 5px;
   overflow: cover;
   margin: 10px;
-  background-color: rgba(255, 255, 255, 0.68);
+  background-color: white;
 }
-
+.card__content-img {
+  background-image: url("../assets/quien.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
 .card-img {
-  width: 70%;
+  width: 150px;
   height: auto;
-  object-fit: cover;
 }
 
 .card-content {
