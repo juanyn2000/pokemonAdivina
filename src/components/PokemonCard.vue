@@ -1,231 +1,17 @@
-<!-- <template>
-  <div class="card">
-    <div class="card__content-img">
-      <img
-        :src="pokemon.sprites?.front_default"
-        :alt="pokemon?.name"
-        class="card-img"
-        :style="{ filter: adivinado ? 'none' : ' brightness(0)' }"
-      />
-    </div>
-    <h3 v-if="adivinado">{{ pokemon.name }}</h3>
-    <div
-      class="card-content"
-      :style="{ display: adivinado ? 'none' : 'block' }"
-    >
-      <input
-        type="text"
-        placeholder="Escriba el nombre"
-        class="card-input"
-        v-model="pokemonInput"
-        @keyup.enter="descubrir"
-      />
-      <button class="card-button" @click="descubrir">Descubrir</button>
-    </div>
-  </div>
-</template>
-
-<script>
-export default {
-  name: "PokemonCard",
-  props: {
-    pokemon: Object,
-  },
-  data() {
-    return {
-      adivinado: false,
-      pokemonInput: "",
-    };
-  },
-  methods: {
-    descubrir() {
-      if (this.pokemonInput.toLowerCase() === this.pokemon.name) {
-        this.adivinado = true;
-        this.$emit("pokemonAdivinado", this.adivinado);
-      }
-    },
-  },
-};
-</script>
-
-<style scoped>
-.card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: cover;
-  margin: 10px;
-  background-color: white;
-}
-.card__content-img {
-  background-image: url("../assets/quien.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-.card-img {
-  width: 150px;
-  height: auto;
-}
-
-.card-content {
-  padding: 10px;
-}
-
-.card-input {
-  width: 80%;
-  padding: 5px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.card-button {
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-</style> -->
-<!-- <template>
-  <div class="card">
-    <div class="card__content-img">
-      <img
-        :src="pokemon.sprites?.front_default"
-        :alt="pokemon?.name"
-        class="card-img"
-        :style="{ filter: adivinado ? 'none' : 'brightness(0)' }"
-      />
-      <div v-if="error" class="error-overlay">Nombre Incorrecto</div>
-    </div>
-    <h3 v-if="adivinado">{{ pokemon.name }}</h3>
-    <div
-      class="card-content"
-      :style="{ display: adivinado ? 'none' : 'block' }"
-    >
-      <input
-        type="text"
-        placeholder="Escriba el nombre"
-        class="card-input"
-        v-model="pokemonInput"
-        @keyup.enter="descubrir"
-      />
-      <button class="card-button" @click="descubrir">Descubrir</button>
-    </div>
-  </div>
-</template>
-
-<script>
-export default {
-  name: "PokemonCard",
-  props: {
-    pokemon: Object,
-  },
-  data() {
-    return {
-      adivinado: false,
-      pokemonInput: "",
-      error: false, // Propiedad para manejar el estado del error
-    };
-  },
-  methods: {
-    descubrir() {
-      if (this.pokemonInput.toLowerCase() === this.pokemon.name.toLowerCase()) {
-        this.adivinado = true;
-        this.error = false; // Si es correcto, ocultar el mensaje de error
-        this.$emit("pokemonAdivinado", this.adivinado);
-      } else {
-        this.error = true; // Mostrar el mensaje de error si es incorrecto
-        setTimeout(() => {
-          this.error = false; // Ocultar el mensaje de error después de 3 segundos
-        }, 3000);
-      }
-    },
-  },
-};
-</script>
-
-<style scoped>
-.card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-  margin: 10px;
-  background-color: white;
-}
-
-.card__content-img {
-  background-image: url("../assets/quien.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.card-img {
-  width: 150px;
-  height: auto;
-}
-
-.error-overlay {
-  position: absolute;
-  top: 50%;
-  left: 40%;
-  transform: translate(-50%, -50%);
-  color: red;
-  font-size: 25px;
-  font-weight: bold;
- 
-
-}
-
-.card-content {
-  padding: 10px;
-}
-
-.card-input {
-  width: 80%;
-  padding: 5px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.card-button {
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-</style> -->
 <template>
   <div class="card">
     <div class="card__content-img">
       <img
+        ref="cardImage"
         :src="pokemon.sprites?.front_default"
         :alt="pokemon?.name"
         class="card-img"
         :style="{ filter: mostrado ? 'none' : 'brightness(0)' }"
+        :class="{ 'brillo-descubierto': adivinado }"
       />
-      <div v-if="error" class="error-overlay">Nombre Incorrecto</div>
+      <div v-if="error" class="error-overlay">
+        <img class="img-error" src="../assets/error.png" alt="cruz indica error" />
+      </div>
     </div>
     <h3 v-if="mostrado" class="pokemon-nombre">{{ pokemon.name }}</h3>
     <div class="card-content" :style="{ display: mostrado ? 'none' : 'block' }">
@@ -237,10 +23,8 @@ export default {
         @keyup.enter="descubrir"
       />
       <div class="content-button">
-        <button class="card-button" @click="descubrir">Descubrir</button>
-        <button class="card-button omitir-button" @click="omitir">
-          Omitir
-        </button>
+        <button class="button-descubrir" @click="descubrir">Descubrir</button>
+        <button class="button-omitir" @click="omitir">Omitir</button>
       </div>
     </div>
   </div>
@@ -255,9 +39,9 @@ export default {
   data() {
     return {
       adivinado: false,
-      mostrado: false, 
+      mostrado: false,
       pokemonInput: "",
-      error: false, 
+      error: false,
     };
   },
   methods: {
@@ -266,17 +50,34 @@ export default {
         this.adivinado = true;
         this.mostrado = true;
         this.error = false;
+        // Activar la animación de brillo
+        this.$nextTick(() => {
+          this.$refs.cardImage.classList.add('brillo-descubierto');
+          setTimeout(() => {
+            this.$refs.cardImage.classList.remove('brillo-descubierto');
+          }, 1500); // Duración de la animación de brillo
+        });
         this.$emit("pokemonAdivinado", this.adivinado);
       } else {
         this.error = true;
+        this.$nextTick(() => {
+          const errorOverlay = document.querySelector('.error-overlay');
+          if (errorOverlay) {
+            errorOverlay.classList.remove('animation-reset');
+            void errorOverlay.offsetWidth; 
+            errorOverlay.classList.add('animation-reset');
+          }
+        });
         setTimeout(() => {
           this.error = false;
         }, 3000);
       }
     },
     omitir() {
-      this.mostrado = true; 
-      this.adivinado = false; 
+      this.mostrado = true;
+      this.adivinado = false;
+      // Emitir el evento para Pokémon omitido
+      this.$emit("pokemonOmitido", this.pokemon);
     },
   },
 };
@@ -310,52 +111,100 @@ export default {
   height: auto;
 }
 
-.error-overlay {
-  text-align: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #ff0000;
-  font-size: 40px;
-  font-weight: bold;
+.brillo-descubierto {
+  animation: animacionBrillo 1.5s ease-in-out;
+}
+
+@keyframes animacionBrillo {
+  0% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(2.5);
+  }
+  100% {
+    filter: brightness(1);
+  }
 }
 
 .card-content {
-  padding: 0; 
-  margin: 0; 
+  padding: 10px;
 }
 
 .card-input {
   width: 100%;
-  margin-top: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   height: 30px;
 }
-
-.card-button {
-  background-color: #ffde00;
+button{
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.button-descubrir {
+  background-color: #b3a125;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
-
-.omitir-button {
-  background-color: #6c757d;
+.button-descubrir:hover {
+  background-color: #ffe100;
 }
+
+.button-omitir {
+  background-color: #757575;
+}
+.button-omitir:hover {
+  background-color: #a5a5a5;
+}
+
 .content-button {
   display: flex;
   gap: 10px;
   padding: 0;
   margin: 0;
-  justify-content: space-between; 
 }
+
 .pokemon-nombre {
   color: white;
   font-size: 30px;
   font-weight: bold;
   text-align: center;
+}
+
+.error-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: aparecerDesaparecer 3s ease-in-out;
+}
+
+.img-error {
+  width: 150px;
+  height: 150px;
+}
+
+@keyframes aparecerDesaparecer {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
 }
 </style>
