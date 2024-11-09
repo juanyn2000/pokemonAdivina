@@ -101,7 +101,7 @@ export default {
       }
 
       const randomIds = new Set();
-      while (randomIds.size < 5) {
+      while (randomIds.size < 20) {
         randomIds.add(Math.floor(Math.random() * (endId - startId + 1)) + startId);
       }
 
@@ -128,7 +128,7 @@ export default {
       this.checkRondaTerminada();
     },
     checkRondaTerminada() {
-      if (this.pokemonContador === 5) {
+      if (this.pokemonContador === 20) {
         this.modalVisible = true;
       }
     },
