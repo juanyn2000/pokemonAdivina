@@ -1,14 +1,33 @@
 <template>
-  <h2 v-if="juegoIniciado">Pokémon descubiertos: <span class="contador">{{ contador }} </span> </h2>
+  <h2 v-if="juegoIniciado">Pokémon descubiertos: <span class="contador">{{ contador }}</span></h2>
   <main>
-    <button v-if="!juegoIniciado" @click="iniciarJuego">Iniciar Juego</button>
+    <!-- Select de generaciones y botón de iniciar -->
+    <div v-if="!juegoIniciado" class="text-center content-but-sel">
+      <label for="generationSelect" class="form-label">Selecciona una Generación:</label>
+      <select id="generationSelect" class="form-select mb-3" v-model="selectedGeneration">
+        <option value="all">Todos</option>
+        <option value="gen1">Generación 1</option>
+        <option value="gen2">Generación 2</option>
+        <option value="gen3">Generación 3</option>
+        <option value="gen4">Generación 4</option>
+        <option value="gen5">Generación 5</option>
+        <option value="gen6">Generación 6</option>
+        <option value="gen7">Generación 7</option>
+      </select>
+      <button @click="iniciarJuego" class="btn btn-inicio">Iniciar Juego</button>
+    </div>
 
-    <div v-if="juegoIniciado" v-for="pokemon in pokemons" :key="pokemon.id">
-      <PokemonCard 
-        :pokemon="pokemon" 
-        @pokemonAdivinado="sumaContador" 
-        @pokemonOmitido="omitirPokemon"
-      />
+    <div v-if="juegoIniciado" class="tarjetas-contenedor">
+      <div v-for="(pokemon, index) in pokemons" :key="pokemon.id">
+        <!-- Aquí se elimina la animación de transición -->
+        <PokemonCard 
+          v-show="index === tarjetaActual"  
+          :pokemon="pokemon"
+          @pokemonAdivinado="sumaContador"
+          @pokemonOmitido="omitirPokemon"
+          @avanzarCard="avanzarCard"  
+        />
+      </div>
     </div>
 
     <!-- Modal de Resultados -->
@@ -37,22 +56,53 @@ export default {
       pokemonadivinados: [],
       pokemonOmitidos: [],
       juegoIniciado: false,
-      modalVisible: false, // Controla la visibilidad del modal
-      pokemonContador: 0, // Variable para contar adivinados y omitidos
+      modalVisible: false,
+      pokemonContador: 0,
+      tarjetaActual: 0,
+      selectedGeneration: 'all',
     };
   },
   methods: {
     async iniciarJuego() {
       this.juegoIniciado = true;
-      this.pokemonadivinados = []; // Reiniciar el contador de adivinados
-      this.pokemonOmitidos = []; // Reiniciar el contador de omitidos
-      this.pokemonContador = 0; // Reiniciar el contador
-      this.modalVisible = false; // Asegurarse de que el modal esté cerrado al reiniciar
+      this.pokemonadivinados = [];
+      this.pokemonOmitidos = [];
+      this.pokemonContador = 0;
+      this.tarjetaActual = 0;
+      this.modalVisible = false;
 
-      // Genera ids aleatorios
+      let startId = 1;
+      let endId = 151;
+
+      switch (this.selectedGeneration) {
+        case 'gen1':
+          startId = 1; endId = 151;
+          break;
+        case 'gen2':
+          startId = 152; endId = 251;
+          break;
+        case 'gen3':
+          startId = 252; endId = 386;
+          break;
+        case 'gen4':
+          startId = 387; endId = 493;
+          break;
+        case 'gen5':
+          startId = 494; endId = 649;
+          break;
+        case 'gen6':
+          startId = 650; endId = 721;
+          break;
+        case 'gen7':
+          startId = 722; endId = 809;
+          break;
+        default:
+          startId = 1; endId = 809;
+      }
+
       const randomIds = new Set();
-      while (randomIds.size < 20) {
-        randomIds.add(Math.floor(Math.random() * 151) + 1);
+      while (randomIds.size < 5) {
+        randomIds.add(Math.floor(Math.random() * (endId - startId + 1)) + startId);
       }
 
       const idsArray = Array.from(randomIds);
@@ -63,36 +113,38 @@ export default {
         )
       );
 
-      // Asigna los datos obtenidos al array pokemons
       this.pokemons = pokemonData.map((pokemon) => pokemon.data);
     },
     sumaContador(adivinado) {
       if (adivinado) {
         this.pokemonadivinados.push(adivinado);
-        this.pokemonContador++; // Aumentar el contador de Pokémon adivinados
+        this.pokemonContador++;
       }
       this.checkRondaTerminada();
     },
     omitirPokemon(pokemon) {
       this.pokemonOmitidos.push(pokemon);
-      this.pokemonContador++; // Aumentar el contador de Pokémon omitidos
+      this.pokemonContador++;
       this.checkRondaTerminada();
     },
     checkRondaTerminada() {
-      // Verifica si se han adivinado o omitido los 20 Pokémon
-      if (this.pokemonContador === 20) {
-        this.modalVisible = true; // Mostrar el modal cuando todos los Pokémon hayan sido respondidos
+      if (this.pokemonContador === 5) {
+        this.modalVisible = true;
       }
     },
     cerrarModal() {
-      // Reiniciar el estado del juego sin recargar la página
       this.juegoIniciado = false;
       this.pokemons = [];
       this.pokemonadivinados = [];
       this.pokemonOmitidos = [];
-      this.pokemonContador = 0; // Reiniciar el contador
+      this.pokemonContador = 0;
       this.modalVisible = false;
-    }
+    },
+    avanzarCard() {
+      if (this.tarjetaActual < this.pokemons.length - 1) {
+        this.tarjetaActual++;
+      }
+    },
   },
   computed: {
     contador() {
@@ -109,25 +161,71 @@ h2 {
 }
 main {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+}
+label {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin-top: 40px;
+}
+.content-but-sel {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
-button {
-  margin: 40px auto;
+.btn-inicio {
+  margin: 20px auto;
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
-  background-color: rgb(195, 11, 11);
+  background: linear-gradient(135deg, #ffcb05, #3b4cca);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   color: white;
-}
-button:hover {
-  background-color: rgb(255, 0, 0);
+  transition: background 0.3s, transform 0.2s;
 }
 
-.contador {
-  color: #ee830a;
-  font-size: 40px;
-  font-weight: bold;
+.btn-inicio:hover {
+  background: linear-gradient(135deg, #ffd700, #27408b);
+  transform: translateY(-3px);
+}
+
+select {
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 2px solid #3b4cca;
+  background-color: #f8f9fa;
+  color: #3b4cca;
+  transition: border-color 0.3s;
+}
+
+select:focus {
+  border-color: #ffcb05;
+  outline: none;
+}
+
+.tarjetas-contenedor {
+  display: flex;
+  justify-content: center;
+  height: 80vh; /* Ajusta el alto de la vista para que la tarjeta esté centrada */
+  width: 100%;
+  position: relative;
+}
+
+.pokemon-card {
+  width: 200px; /* Ajusta el tamaño de la tarjeta */
+  height: 300px; /* Ajusta el tamaño de la tarjeta */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
