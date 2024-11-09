@@ -51,8 +51,8 @@ export default {
 
       // Genera ids aleatorios
       const randomIds = new Set();
-      while (randomIds.size < 20) {
-        randomIds.add(Math.floor(Math.random() * 151) + 1);
+      while (randomIds.size < this.rondasPorAdivinar) {
+        randomIds.add(Math.floor(Math.random() * (endId - startId + 1)) + startId);//toma un número aleatorio entre el rango de ids
       }
 
       const idsArray = Array.from(randomIds);
@@ -80,7 +80,7 @@ export default {
     },
     checkRondaTerminada() {
       // Verifica si se han adivinado o omitido los 20 Pokémon
-      if (this.pokemonContador === 20) {
+      if (this.pokemonContador === this.rondasPorAdivinar) {// Cambiar el número de rondas por dificultad
         this.modalVisible = true; // Mostrar el modal cuando todos los Pokémon hayan sido respondidos
       }
     },
