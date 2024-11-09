@@ -161,6 +161,7 @@ export default {
 }
 
 button {
+  margin-top: 10px;
   width: 100%;
   height: 40px;
   border: none;
@@ -192,7 +193,7 @@ button {
   display: flex;
   gap: 10px;
   padding: 0;
-  margin: 0;
+  margin-top: 20px;
 }
 
 .pokemon-nombre {
