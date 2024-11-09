@@ -14,6 +14,15 @@
         <option value="gen6">Generación 6</option>
         <option value="gen7">Generación 7</option>
       </select>
+
+      <!-- Nuevo select para elegir dificultad -->
+      <label for="dificultad" class="form-label">Selecciona Dificultad:</label>
+      <select id="dificultad" class="form-select mb-3" v-model="dificultad">
+        <option value="facil">Fácil</option>
+        <option value="medio">Medio</option>
+        <option value="dificil">Difícil</option>
+      </select>
+
       <button @click="iniciarJuego" class="btn btn-inicio">Iniciar Juego</button>
     </div>
 
@@ -60,6 +69,8 @@ export default {
       pokemonContador: 0,
       tarjetaActual: 0,
       selectedGeneration: 'all',
+      dificultad: 'facil', 
+      rondasPorAdivinar: 5, 
     };
   },
   methods: {
@@ -70,6 +81,9 @@ export default {
       this.pokemonContador = 0;
       this.tarjetaActual = 0;
       this.modalVisible = false;
+
+      // Asignar el número de rondas por dificultad
+      this.asignarRondasPorDificultad();
 
       let startId = 1;
       let endId = 151;
@@ -101,8 +115,8 @@ export default {
       }
 
       const randomIds = new Set();
-      while (randomIds.size < 20) {
-        randomIds.add(Math.floor(Math.random() * 151) + 1);
+      while (randomIds.size < this.rondasPorAdivinar) {
+        randomIds.add(Math.floor(Math.random() * (endId - startId + 1)) + startId);//toma un número aleatorio entre el rango de ids
       }
 
       const idsArray = Array.from(randomIds);
@@ -114,6 +128,16 @@ export default {
       );
 
       this.pokemons = pokemonData.map((pokemon) => pokemon.data);
+    },
+    //crea una función para asignar el número de rondas por dificultad
+    asignarRondasPorDificultad() {
+      if (this.dificultad === 'facil') {
+        this.rondasPorAdivinar = 5;
+      } else if (this.dificultad === 'medio') {
+        this.rondasPorAdivinar = 10;
+      } else if (this.dificultad === 'dificil') {
+        this.rondasPorAdivinar = 20;
+      }
     },
     sumaContador(adivinado) {
       if (adivinado) {
@@ -128,9 +152,8 @@ export default {
       this.checkRondaTerminada();
     },
     checkRondaTerminada() {
-      // Verifica si se han adivinado o omitido los 20 Pokémon
-      if (this.pokemonContador === 20) {
-        this.modalVisible = true; // Mostrar el modal cuando todos los Pokémon hayan sido respondidos
+      if (this.pokemonContador === this.rondasPorAdivinar) {// Cambiar el número de rondas por dificultad
+        this.modalVisible = true;
       }
     },
     cerrarModal() {
