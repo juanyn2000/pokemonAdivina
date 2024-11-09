@@ -10,17 +10,23 @@
         :class="{ 'brillo-descubierto': adivinado }"
       />
       <div v-if="error" class="error-overlay">
-        <img class="img-error" src="../assets/error.png" alt="cruz indica error" />
+        <img
+          class="img-error"
+          src="../assets/error.png"
+          alt="cruz indica error"
+        />
       </div>
     </div>
     <h3 v-if="mostrado" class="pokemon-nombre">{{ pokemon.name }}</h3>
     <div class="card-content" :style="{ display: mostrado ? 'none' : 'block' }">
       <input
+        ref="pokemonInput"
         type="text"
         placeholder="Escriba el nombre"
         class="card-input"
         v-model="pokemonInput"
         @keyup.enter="descubrir"
+        @keyup.esc="omitir"
       />
       <div class="content-button">
         <button class="button-descubrir" @click="descubrir">Descubrir</button>
@@ -32,42 +38,46 @@
 
 <script>
 export default {
-  name: "PokemonCard",
-  props: {
-    pokemon: Object,
-  },
   data() {
     return {
-      adivinado: false,
-      mostrado: false,
       pokemonInput: "",
+      mostrado: false,
+      adivinado: false,
       error: false,
     };
   },
+  props: {
+    pokemon: {
+      type: Object,
+      required: true,
+    },
+  },
+  mounted() {
+    // Al montar la tarjeta, aplicar el focus al input
+    this.$nextTick(() => {
+      if (this.$refs.pokemonInput) {
+        this.$refs.pokemonInput.focus();
+      }
+    });
+  },
   methods: {
     descubrir() {
-      if (this.pokemonInput.toLowerCase() === this.pokemon.name.toLowerCase()) {
+      if (this.pokemonInput.toLowerCase() === this.pokemon.name) {
         this.adivinado = true;
         this.mostrado = true;
         this.error = false;
-        // Activar la animación de brillo
         this.$nextTick(() => {
-          this.$refs.cardImage.classList.add('brillo-descubierto');
+          this.$refs.cardImage.classList.add("brillo-descubierto");
           setTimeout(() => {
-            this.$refs.cardImage.classList.remove('brillo-descubierto');
-          }, 1500); // Duración de la animación de brillo
+            this.$refs.cardImage.classList.remove("brillo-descubierto");
+          }, 1500);
         });
-        this.$emit("pokemonAdivinado", this.adivinado);
+        setTimeout(() => {
+          this.$emit("pokemonAdivinado", this.adivinado);
+          this.$emit("avanzarCard");
+        }, 2500);
       } else {
         this.error = true;
-        this.$nextTick(() => {
-          const errorOverlay = document.querySelector('.error-overlay');
-          if (errorOverlay) {
-            errorOverlay.classList.remove('animation-reset');
-            void errorOverlay.offsetWidth; 
-            errorOverlay.classList.add('animation-reset');
-          }
-        });
         setTimeout(() => {
           this.error = false;
         }, 3000);
@@ -76,14 +86,25 @@ export default {
     omitir() {
       this.mostrado = true;
       this.adivinado = false;
-      // Emitir el evento para Pokémon omitido
-      this.$emit("pokemonOmitido", this.pokemon);
+      setTimeout(() => {
+        this.$emit("pokemonOmitido", this.pokemon);
+        this.$emit("avanzarCard");
+      }, 1000);
     },
+  },
+  updated() {
+    // Cuando la tarjeta se actualiza (cambia), hacer focus en el input
+    this.$nextTick(() => {
+      if (this.$refs.pokemonInput) {
+        this.$refs.pokemonInput.focus();
+      }
+    });
   },
 };
 </script>
 
 <style scoped>
+/* Estilos para la tarjeta y otros elementos */
 .card {
   padding: 5px;
   display: flex;
@@ -96,6 +117,7 @@ export default {
   background-color: #ff0000;
 }
 
+/* Otros estilos */
 .card__content-img {
   background-image: url("../assets/quien.png");
   background-size: cover;
@@ -137,13 +159,16 @@ export default {
   border-radius: 5px;
   height: 30px;
 }
-button{
+
+button {
+  margin-top: 10px;
   width: 100%;
   height: 40px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
+
 .button-descubrir {
   background-color: #b3a125;
   color: white;
@@ -151,6 +176,7 @@ button{
   border-radius: 5px;
   cursor: pointer;
 }
+
 .button-descubrir:hover {
   background-color: #ffe100;
 }
@@ -158,6 +184,7 @@ button{
 .button-omitir {
   background-color: #757575;
 }
+
 .button-omitir:hover {
   background-color: #a5a5a5;
 }
@@ -166,7 +193,7 @@ button{
   display: flex;
   gap: 10px;
   padding: 0;
-  margin: 0;
+  margin-top: 20px;
 }
 
 .pokemon-nombre {
