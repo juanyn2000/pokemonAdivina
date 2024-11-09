@@ -1,13 +1,18 @@
 <template>
   <h2 v-if="juegoIniciado">Pokémon descubiertos: <span class="contador">{{ contador }} </span> </h2>
   <main>
+    
     <button v-if="!juegoIniciado" @click="iniciarJuego">Iniciar Juego</button>
 
-    <div v-if="juegoIniciado" v-for="pokemon in pokemons" :key="pokemon.id">
+    <div v-if="juegoIniciado">
       <PokemonCard 
-        :pokemon="pokemon" 
-        @pokemonAdivinado="sumaContador" 
+        v-for="(pokemon, index) in pokemons"
+        :key="pokemon.id"
+        :pokemon="pokemon"
+        v-show="index === tarjetaActual"  
+        @pokemonAdivinado="sumaContador"
         @pokemonOmitido="omitirPokemon"
+        @avanzarCard="avanzarCard"  
       />
     </div>
 
@@ -20,6 +25,7 @@
     />
   </main>
 </template>
+
 
 <script>
 import PokemonCard from "../components/PokemonCard.vue";
@@ -39,20 +45,23 @@ export default {
       juegoIniciado: false,
       modalVisible: false, // Controla la visibilidad del modal
       pokemonContador: 0, // Variable para contar adivinados y omitidos
+      tarjetaActual: 0, // Índice de la tarjeta actual
     };
   },
+
   methods: {
     async iniciarJuego() {
       this.juegoIniciado = true;
       this.pokemonadivinados = []; // Reiniciar el contador de adivinados
       this.pokemonOmitidos = []; // Reiniciar el contador de omitidos
       this.pokemonContador = 0; // Reiniciar el contador
+      this.tarjetaActual = 0; // Comenzar desde la primera tarjeta
       this.modalVisible = false; // Asegurarse de que el modal esté cerrado al reiniciar
 
       // Genera ids aleatorios
       const randomIds = new Set();
-      while (randomIds.size < 20) {
-        randomIds.add(Math.floor(Math.random() * 151) + 1);
+      while (randomIds.size < 5) {
+        randomIds.add(Math.floor(Math.random() * (151 - 1 + 1)) + 1);
       }
 
       const idsArray = Array.from(randomIds);
@@ -80,7 +89,7 @@ export default {
     },
     checkRondaTerminada() {
       // Verifica si se han adivinado o omitido los 20 Pokémon
-      if (this.pokemonContador === 20) {
+      if (this.pokemonContador === 5) {
         this.modalVisible = true; // Mostrar el modal cuando todos los Pokémon hayan sido respondidos
       }
     },
@@ -92,7 +101,13 @@ export default {
       this.pokemonOmitidos = [];
       this.pokemonContador = 0; // Reiniciar el contador
       this.modalVisible = false;
-    }
+    },
+    avanzarCard() {
+      // Incrementar el índice para mostrar la siguiente tarjeta
+      if (this.tarjetaActual < this.pokemons.length - 1) {
+        this.tarjetaActual++;
+      }
+    },
   },
   computed: {
     contador() {
