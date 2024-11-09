@@ -116,7 +116,7 @@ export default {
 
       const randomIds = new Set();
       while (randomIds.size < this.rondasPorAdivinar) {
-        randomIds.add(Math.floor(Math.random() * (endId - startId + 1)) + startId);
+        randomIds.add(Math.floor(Math.random() * (endId - startId + 1)) + startId);//toma un número aleatorio entre el rango de ids
       }
 
       const idsArray = Array.from(randomIds);
@@ -129,6 +129,7 @@ export default {
 
       this.pokemons = pokemonData.map((pokemon) => pokemon.data);
     },
+    //crea una función para asignar el número de rondas por dificultad
     asignarRondasPorDificultad() {
       if (this.dificultad === 'facil') {
         this.rondasPorAdivinar = 5;
@@ -151,7 +152,7 @@ export default {
       this.checkRondaTerminada();
     },
     checkRondaTerminada() {
-      if (this.pokemonContador === this.rondasPorAdivinar) {
+      if (this.pokemonContador === this.rondasPorAdivinar) {// Cambiar el número de rondas por dificultad
         this.modalVisible = true;
       }
     },
