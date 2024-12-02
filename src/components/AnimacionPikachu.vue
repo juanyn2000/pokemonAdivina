@@ -13,7 +13,7 @@ export default {};
   position: absolute;
   bottom: 490px;
   right: 100px;
-  opacity: 0.8;
+  opacity: 0;
   z-index: 11;
   animation: pikachu-run 5s linear infinite;
   animation-delay: 5s;
