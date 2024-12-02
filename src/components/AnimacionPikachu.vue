@@ -34,17 +34,21 @@ export default {};
   @keyframes pikachu-run {
     0% {
       opacity: 1;
-      left: -300px;
+      left: 0px;
     }
 
     100% {
-      left: 30%;
-      transform: translateX(-10%);
+      left: 80%;
+      transform: translateX(10%);
     }
   }
   .pikachu {
     position: absolute;
     bottom: 400px;
+  }
+  img {
+    width: 70px;
+    height: 70px;
   }
 }
 </style>
