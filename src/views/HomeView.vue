@@ -1,10 +1,17 @@
 <template>
-  <h2 v-if="juegoIniciado">Pokémon descubiertos: <span class="contador">{{ contador }}</span></h2>
+  <h2 v-if="juegoIniciado">
+    Pokémon descubiertos: <span class="contador">{{ contador }}</span>
+  </h2>
   <main>
-    <!-- Select de generaciones y botón de iniciar -->
     <div v-if="!juegoIniciado" class="text-center content-but-sel">
-      <label for="generationSelect" class="form-label">Selecciona una Generación:</label>
-      <select id="generationSelect" class="form-select mb-3" v-model="selectedGeneration">
+      <label for="generationSelect" class="form-label"
+        >Selecciona una Generación:</label
+      >
+      <select
+        id="generationSelect"
+        class="form-select mb-3"
+        v-model="selectedGeneration"
+      >
         <option value="all">Todos</option>
         <option value="gen1">Generación 1</option>
         <option value="gen2">Generación 2</option>
@@ -14,50 +21,54 @@
         <option value="gen6">Generación 6</option>
         <option value="gen7">Generación 7</option>
       </select>
-
-      <!-- Nuevo select para elegir dificultad -->
       <label for="dificultad" class="form-label">Selecciona Dificultad:</label>
       <select id="dificultad" class="form-select mb-3" v-model="dificultad">
         <option value="facil">Fácil</option>
         <option value="medio">Medio</option>
         <option value="dificil">Difícil</option>
       </select>
-
-      <button @click="iniciarJuego" class="btn btn-inicio">Iniciar Juego</button>
+      <button @click="iniciarJuego" class="btn btn-inicio">
+        Iniciar Juego
+      </button>
     </div>
-
     <div v-if="juegoIniciado" class="tarjetas-contenedor">
       <div v-for="(pokemon, index) in pokemons" :key="pokemon.id">
-        <!-- Aquí se elimina la animación de transición -->
-        <PokemonCard 
-          v-show="index === tarjetaActual"  
+        <PokemonCard
+          v-show="index === tarjetaActual"
           :pokemon="pokemon"
           @pokemonAdivinado="sumaContador"
           @pokemonOmitido="omitirPokemon"
-          @avanzarCard="avanzarCard"  
+          @avanzarCard="avanzarCard"
         />
       </div>
     </div>
-
-    <!-- Modal de Resultados -->
-    <ModalResultado 
+    <ModalResultado
       v-if="modalVisible"
       :pokemonadivinados="pokemonadivinados"
       :pokemonOmitidos="pokemonOmitidos"
       @cerrarModal="cerrarModal"
     />
+    <stars />
+    <AnimacionPikachu />
+    <AnimacionPokeball />
   </main>
 </template>
 
 <script>
 import PokemonCard from "../components/PokemonCard.vue";
 import ModalResultado from "../components/ModalResultado.vue";
+import Stars from "@/components/Stars.vue";
+import AnimacionPikachu from "@/components/AnimacionPikachu.vue";
+import AnimacionPokeball from '@/components/AnimacionPokeball.vue';
 import axios from "axios";
 
 export default {
   components: {
     PokemonCard,
     ModalResultado,
+    Stars,
+    AnimacionPikachu,
+    AnimacionPokeball,
   },
   data() {
     return {
@@ -68,9 +79,9 @@ export default {
       modalVisible: false,
       pokemonContador: 0,
       tarjetaActual: 0,
-      selectedGeneration: 'all',
-      dificultad: 'facil', 
-      rondasPorAdivinar: 5, 
+      selectedGeneration: "all",
+      dificultad: "facil",
+      rondasPorAdivinar: 5,
     };
   },
   methods: {
@@ -81,46 +92,53 @@ export default {
       this.pokemonContador = 0;
       this.tarjetaActual = 0;
       this.modalVisible = false;
-
-      // Asignar el número de rondas por dificultad
       this.asignarRondasPorDificultad();
 
       let startId = 1;
       let endId = 151;
 
       switch (this.selectedGeneration) {
-        case 'gen1':
-          startId = 1; endId = 151;
+        case "gen1":
+          startId = 1;
+          endId = 151;
           break;
-        case 'gen2':
-          startId = 152; endId = 251;
+        case "gen2":
+          startId = 152;
+          endId = 251;
           break;
-        case 'gen3':
-          startId = 252; endId = 386;
+        case "gen3":
+          startId = 252;
+          endId = 386;
           break;
-        case 'gen4':
-          startId = 387; endId = 493;
+        case "gen4":
+          startId = 387;
+          endId = 493;
           break;
-        case 'gen5':
-          startId = 494; endId = 649;
+        case "gen5":
+          startId = 494;
+          endId = 649;
           break;
-        case 'gen6':
-          startId = 650; endId = 721;
+        case "gen6":
+          startId = 650;
+          endId = 721;
           break;
-        case 'gen7':
-          startId = 722; endId = 809;
+        case "gen7":
+          startId = 722;
+          endId = 809;
           break;
         default:
-          startId = 1; endId = 809;
+          startId = 1;
+          endId = 809;
       }
 
       const randomIds = new Set();
       while (randomIds.size < this.rondasPorAdivinar) {
-        randomIds.add(Math.floor(Math.random() * (endId - startId + 1)) + startId);//toma un número aleatorio entre el rango de ids
+        randomIds.add(
+          Math.floor(Math.random() * (endId - startId + 1)) + startId
+        );
       }
 
       const idsArray = Array.from(randomIds);
-
       const pokemonData = await axios.all(
         idsArray.map((id) =>
           axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`)
@@ -129,30 +147,32 @@ export default {
 
       this.pokemons = pokemonData.map((pokemon) => pokemon.data);
     },
-    //crea una función para asignar el número de rondas por dificultad
     asignarRondasPorDificultad() {
-      if (this.dificultad === 'facil') {
+      if (this.dificultad === "facil") {
         this.rondasPorAdivinar = 5;
-      } else if (this.dificultad === 'medio') {
+      } else if (this.dificultad === "medio") {
         this.rondasPorAdivinar = 10;
-      } else if (this.dificultad === 'dificil') {
+      } else if (this.dificultad === "dificil") {
         this.rondasPorAdivinar = 20;
       }
     },
-    sumaContador(adivinado) {
-      if (adivinado) {
-        this.pokemonadivinados.push(adivinado);
-        this.pokemonContador++;
-      }
-      this.checkRondaTerminada();
-    },
+    async sumaContador(adivinado) {
+  if (adivinado) {
+    this.pokemonadivinados.push(adivinado);
+    this.pokemonContador++;
+   
+  }
+  this.checkRondaTerminada();
+},
+
+
     omitirPokemon(pokemon) {
       this.pokemonOmitidos.push(pokemon);
       this.pokemonContador++;
       this.checkRondaTerminada();
     },
     checkRondaTerminada() {
-      if (this.pokemonContador === this.rondasPorAdivinar) {// Cambiar el número de rondas por dificultad
+      if (this.pokemonContador === this.rondasPorAdivinar) {
         this.modalVisible = true;
       }
     },
@@ -184,10 +204,10 @@ h2 {
   color: white;
 }
 main {
+  margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
 }
 label {
   font-size: 20px;
@@ -252,4 +272,5 @@ select:focus {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 </style>

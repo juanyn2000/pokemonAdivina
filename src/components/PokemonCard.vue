@@ -1,20 +1,18 @@
 <template>
   <div class="card">
     <div class="card__content-img">
+      <img class="img-quien" src="../assets/quien.png" alt="¿Quién es este Pokémon?" />
       <img
         ref="cardImage"
         :src="pokemon.sprites?.front_default"
         :alt="pokemon?.name"
-        class="card-img"
+        class="img-api"
+        loading="lazy"
         :style="{ filter: mostrado ? 'none' : 'brightness(0)' }"
         :class="{ 'brillo-descubierto': adivinado }"
       />
       <div v-if="error" class="error-overlay">
-        <img
-          class="img-error"
-          src="../assets/error.png"
-          alt="cruz indica error"
-        />
+        <img class="img-error" src="../assets/error.png" alt="Error" />
       </div>
     </div>
     <h3 v-if="mostrado" class="pokemon-nombre">{{ pokemon.name }}</h3>
@@ -27,6 +25,8 @@
         v-model="pokemonInput"
         @keyup.enter="descubrir"
         @keyup.esc="omitir"
+        autocapitalize="none"
+        autocomplete="off"
       />
       <div class="content-button">
         <button class="button-descubrir" @click="descubrir">Descubrir</button>
@@ -53,7 +53,6 @@ export default {
     },
   },
   mounted() {
-    // Al montar la tarjeta, aplicar el focus al input
     this.$nextTick(() => {
       if (this.$refs.pokemonInput) {
         this.$refs.pokemonInput.focus();
@@ -89,11 +88,10 @@ export default {
       setTimeout(() => {
         this.$emit("pokemonOmitido", this.pokemon);
         this.$emit("avanzarCard");
-      }, 1000);
+      }, 2000);
     },
   },
   updated() {
-    // Cuando la tarjeta se actualiza (cambia), hacer focus en el input
     this.$nextTick(() => {
       if (this.$refs.pokemonInput) {
         this.$refs.pokemonInput.focus();
@@ -104,33 +102,42 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos para la tarjeta y otros elementos */
+/* Estilos principales */
 .card {
-  padding: 5px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 300px;
+  width: 90%;
+  max-width: 400px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  margin: 10px;
+  margin: 10px auto;
   background-color: #ff0000;
+  box-shadow: 0px -10px 15px -10px grey, 0px 10px 15px -10px grey;
 }
 
-/* Otros estilos */
+/* Contenedor de imágenes */
 .card__content-img {
-  background-image: url("../assets/quien.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
   position: relative;
+  margin: 0 auto;
 }
 
-.card-img {
-  width: 150px;
+.img-quien {
+  width: 100%;
   height: auto;
+  border-radius: 5px;
+}
+
+.img-api {
+  width: 140px;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  transform: translate(-50%, -50%);
 }
 
 .brillo-descubierto {
@@ -149,60 +156,74 @@ export default {
   }
 }
 
+/* Contenido y botones */
 .card-content {
   padding: 10px;
 }
 
 .card-input {
+  margin-top: 20px;
   width: 100%;
   border: 1px solid #ccc;
   border-radius: 5px;
-  height: 30px;
+  height: 45px;
+  font-size: 16px;
 }
 
 button {
   margin-top: 10px;
   width: 100%;
-  height: 40px;
+  height: 45px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  color: white;
+  font-size: 14px;
 }
 
 .button-descubrir {
   background-color: #b3a125;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  transition: all 0.3s ease 0s;
 }
 
 .button-descubrir:hover {
-  background-color: #ffe100;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  box-shadow: 0px 5px 40px -10px #b3a125;
+  background-color: #e1c82b;
+  transition: all 0.3s ease 0s;
 }
 
 .button-omitir {
   background-color: #757575;
+  transition: all 0.3s ease 0s;
 }
 
 .button-omitir:hover {
   background-color: #a5a5a5;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  box-shadow: 0px 5px 40px -10px #a5a5a5;
+  transition: all 0.3s ease 0s;
 }
 
 .content-button {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 5px;
   padding: 0;
   margin-top: 20px;
 }
 
+/* Nombre del Pokémon */
 .pokemon-nombre {
   color: white;
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
 }
 
+/* Error */
 .error-overlay {
   position: absolute;
   top: 50%;
@@ -212,8 +233,8 @@ button {
 }
 
 .img-error {
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
 }
 
 @keyframes aparecerDesaparecer {
@@ -232,6 +253,31 @@ button {
   100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.5);
+  }
+}
+
+/* Ajustes responsivos */
+@media (min-width: 600px) {
+  .card {
+    width: 400px;
+  }
+
+  .img-api {
+    width: 180px;
+  }
+
+  .card-input {
+    font-size: 18px;
+    height: 50px;
+  }
+
+  button {
+    font-size: 16px;
+    height: 50px;
+  }
+
+  .pokemon-nombre {
+    font-size: 30px;
   }
 }
 </style>

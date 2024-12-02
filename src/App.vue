@@ -1,9 +1,9 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-  <div class="contenedor-img mb-4">
+  <div class="contenedor-img mb-4 col-12">
     <img
       class="img-titulo img-fluid"
       src="./assets/pokemonTitulo.png"
@@ -13,6 +13,9 @@ import { RouterLink, RouterView } from 'vue-router'
   <h2>¿Quién es ese Pokémon?</h2>
 
   <RouterView />
+
+  
+
 </template>
 
 <style scoped>
@@ -20,6 +23,7 @@ import { RouterLink, RouterView } from 'vue-router'
 .contenedor-img {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .img-titulo {
@@ -35,6 +39,7 @@ h2 {
   font-size: 2.5rem; /* Tamaño de fuente más grande */
   margin-top: 20px;
   margin-bottom: 20px;
+  font-family: cursive;
 }
 
 @media (max-width: 768px) {
@@ -42,4 +47,10 @@ h2 {
     font-size: 1.8rem; /* Ajusta el tamaño del título en pantallas pequeñas */
   }
 }
+
+
+
+
+
+
 </style>

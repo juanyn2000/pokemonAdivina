@@ -1,10 +1,14 @@
 <template>
   <div class="modal-overlay">
     <div class="modal">
-      <h2>Resultados de la ronda</h2>
-      <p>Pokémon adivinados: {{ pokemonadivinados.length }}</p>
-      <p>Pokémon omitidos: {{ pokemonOmitidos.length }}</p>
-      <button ref="closeButton" @click="cerrarModal">CERRAR</button>
+      <h2 class="modal-title">¡Resultados de la ronda!</h2>
+      <p class="modal-text">
+        <span class="highlight">Pokémon adivinados:</span> {{ pokemonadivinados.length }}
+      </p>
+      <p class="modal-text">
+        <span class="highlight">Pokémon omitidos:</span> {{ pokemonOmitidos.length }}
+      </p>
+      <button ref="closeButton" class="btn-close" @click="cerrarModal">Cerrar</button>
     </div>
   </div>
 </template>
@@ -21,19 +25,16 @@ export default {
       overlay.classList.remove("show");
       setTimeout(() => {
         this.$emit("cerrarModal");
-      }, 300); // Tiempo igual al de la transición CSS
+      }, 300);
     },
   },
   mounted() {
-    // Añade la clase para mostrar el modal con la transición
     this.$nextTick(() => {
       const overlay = this.$el;
       overlay.classList.add("show");
-
-      // Asegurarse de que el enfoque ocurra después de la transición
       setTimeout(() => {
         this.$refs.closeButton.focus();
-      }, 300); // Tiempo igual al de la transición CSS
+      }, 300);
     });
   },
 };
@@ -46,13 +47,14 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  z-index: 1000;
 }
 
 .modal-overlay.show {
@@ -61,15 +63,18 @@ export default {
 }
 
 .modal {
-  background-color: #ff0000;
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
+  background: linear-gradient(
+    180deg,
+    #87cefa, /* Azul cielo claro */
+    #ffeb99
+  ); /* Degradado cielo */
+  color: #ffffff;
+  border-radius: 15px;
   padding: 20px;
-  border-radius: 10px;
-  width: 300px;
+  max-width: 90%;
+  width: 400px;
   text-align: center;
-  border: 2px solid white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
   transform: scale(0.8);
   transition: transform 0.3s ease-in-out;
 }
@@ -78,19 +83,41 @@ export default {
   transform: scale(1);
 }
 
-button {
-  width: 80%;
-  height: 50px;
-  background-color: #b3a125;
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.modal-text {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+.highlight {
   color: white;
   font-weight: bold;
-  padding: 5px;
-  border: 1px solid white;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 20px;
 }
-button:hover {
-  background-color: #ffe100;
+
+.btn-close {
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ffcb05, #3b4cca);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: white;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-close:hover {
+  background-color: #388e3c; /* Verde oscuro */
+  transform: translateY(-2px);
+}
+
+.btn-close:active {
+  transform: translateY(1px);
 }
 </style>
